@@ -1,0 +1,40 @@
+/* style.css */
+
+.root {
+    -fx-font-family: Arial;
+    -fx-padding: 20;
+    -fx-background-color: black;
+}
+
+Label {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+}
+
+TextField, PasswordField {
+    -fx-pref-width: 200px;
+    -fx-font-size: 14px;
+    -fx-padding: 5px;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 5px;
+}
+
+Button {
+    -fx-pref-width: 100px;
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-border-radius: 5px;
+    -fx-padding: 8px 15px;
+}
+
+Button:hover {
+    -fx-background-color: #45a049;
+}
+
+GridPane {
+    -fx-alignment: center;
+    -fx-hgap: 10;
+    -fx-vgap: 10;
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+
+<GridPane fx:controller="com.example.fianance.SignUpController"
+          xmlns:fx="http://javafx.com/fxml/1"
+          alignment="CENTER" hgap="10" vgap="10"
+          stylesheets="@style.css">
+
+    <Label text="Create New Account"/>
+
+    <!-- Username Label and TextField -->
+    <Label text="Username:" GridPane.rowIndex="1"/>
+    <TextField fx:id="newUsernameField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+    <!-- Password Label and PasswordField -->
+    <Label text="Password:" GridPane.rowIndex="2"/>
+    <PasswordField fx:id="newPasswordField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+    <!-- Confirm Password Label and PasswordField -->
+    <Label text="Confirm Password:" GridPane.rowIndex="3"/>
+    <PasswordField fx:id="confirmPasswordField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+    <!-- Sign Up Button -->
+    <Button text="Sign Up" GridPane.columnIndex="1" GridPane.rowIndex="4" onAction="#handleSignUpAction"/>
+</GridPane>
