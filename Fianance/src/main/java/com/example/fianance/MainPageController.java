@@ -25,33 +25,35 @@ public class MainPageController {
     @FXML
     private void handleStockAction() {
         try {
-            String url = "https://www.nseindia.com/market-data/live-equity-market";
-
-            Document document = Jsoup.connect(url).get();
-
-            StockPriceDAO stockPriceDAO = new StockPriceDAO();
-
-            for (Element row : document.select("table tbody tr")) {
-                String symbol = row.select("td.symbol").text();
-                String openPrice = row.select("td.open").text();
-                String highPrice = row.select("td.high").text();
-                String lowPrice = row.select("td.low").text();
-                String closePrice = row.select("td.prevClose").text();
-                String ltp = row.select("td.ltp").text();
-                String volume = row.select("td.volume").text();
-                String changePercentage = row.select("td.changePercentage").text();
-
-                stockPriceDAO.insertStockPrice(symbol, openPrice, highPrice, lowPrice, closePrice, ltp, volume, changePercentage);
-            }
-
-            showAlert("Stock Management", "Data scraped from NSE website and stored successfully.");
+            String stockSymbol = "AAPL"; // Example: Apple Inc.
+            String stockData = scrapeStockData(stockSymbol);
+            showAlert("Stock Management", "Data scraped from Yahoo Finance:\n" + stockData);
         } catch (IOException e) {
-            showAlert("Error", "Failed to scrape data from NSE: " + e.getMessage());
-            e.printStackTrace();
-        } catch (Exception e) {
-            showAlert("Error", "An unexpected error occurred: " + e.getMessage());
+            showAlert("Error", "Failed to scrape stock data: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private String scrapeStockData(String stockSymbol) throws IOException {
+        // URL to the Yahoo Finance page for the given stock symbol
+        String url = "https://finance.yahoo.com/quote/" + stockSymbol;
+
+        // Connect to the website and parse the HTML
+        Document doc = Jsoup.connect(url).get();
+
+        // Select the elements containing stock price and other relevant information
+        Element priceElement = doc.selectFirst("fin-streamer[data-field='regularMarketPrice']");
+        Element changeElement = doc.selectFirst("fin-streamer[data-field='regularMarketChange']");
+        Element changePercentElement = doc.selectFirst("fin-streamer[data-field='regularMarketChangePercent']");
+
+        // Extracting the text
+        String price = priceElement != null ? priceElement.text() : "N/A";
+        String change = changeElement != null ? changeElement.text() : "N/A";
+        String changePercent = changePercentElement != null ? changePercentElement.text() : "N/A";
+
+        // Returning the scraped data as a formatted string
+        return String.format("Symbol: %s\nPrice: %s\nChange: %s\nChange Percentage: %s",
+                stockSymbol, price, change, changePercent);
     }
 
     @FXML
