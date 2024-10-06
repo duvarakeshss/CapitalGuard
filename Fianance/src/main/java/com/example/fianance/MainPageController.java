@@ -11,7 +11,11 @@ import javafx.stage.Stage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import javafx.scene.control.TextArea; // Import this for displaying stock info
+import javafx.scene.layout.VBox;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -19,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class MainPageController {
@@ -209,7 +214,59 @@ public class MainPageController {
         stage.setTitle("Finance Dashboard");
         stage.show();
     }
+    @FXML
+    private void handleViewBestStock(ActionEvent event) {
+        try {
+            String bestStockInfo = getBestStockFromCSV("stocks_data.csv");
+            showBestStockWindow(bestStockInfo);
+        } catch (IOException e) {
+            showAlert("Error", "Failed to read CSV file: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
+    private String getBestStockFromCSV(String csvFilePath) throws IOException {
+        List<StockData> stockDataList = new ArrayList<>();
+
+        // Read the CSV file
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath))) {
+            String line;
+            // Skip header
+            br.readLine();
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                if (values.length == 5) {
+                    String symbol = values[0];
+                    String name = values[1];
+                    BigDecimal lastPrice = new BigDecimal(values[2]);
+                    BigDecimal change = new BigDecimal(values[3]);
+                    BigDecimal percentageChange = new BigDecimal(values[4]);
+
+                    stockDataList.add(new StockData(symbol, name, lastPrice, change, percentageChange));
+                }
+            }
+        }
+
+        // Determine the best stock based on the last price
+        StockData bestStock = stockDataList.stream()
+                .max(Comparator.comparing(StockData::getLastPrice))
+                .orElse(null);
+
+        return bestStock != null ? "Best Stock: " + bestStock.getName() + " (" + bestStock.getSymbol() + ") - Last Price: " + bestStock.getLastPrice() : "No stocks available.";
+    }
+
+    private void showBestStockWindow(String bestStockInfo) {
+        Stage stage = new Stage();
+        VBox vbox = new VBox(10);
+        TextArea textArea = new TextArea(bestStockInfo);
+        textArea.setEditable(false);
+        vbox.getChildren().add(textArea);
+
+        Scene scene = new Scene(vbox, 300, 200);
+        stage.setTitle("Best Stock");
+        stage.setScene(scene);
+        stage.show();
+    }
     private void navigateToStockManagement(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/fianance/StockManagement.fxml"));
         Parent root = loader.load();

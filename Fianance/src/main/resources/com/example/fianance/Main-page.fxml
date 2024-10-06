@@ -11,5 +11,6 @@
 
     <Button text="Fetch Stocks" onAction="#handleStockAction" prefWidth="200" />
     <Button text="View Stocks" onAction="#handleStockManagement" prefWidth="200" />
+    <Button text="View Best Stock" onAction="#handleViewBestStock" prefWidth="200" /> <!-- New button -->
     <Button text="Go to Finance" onAction="#handleFinanceAction" prefWidth="200" />
 </VBox>
