@@ -1,39 +1,47 @@
 package com.example.fianance;
-import com.example.fianance.DatabaseConnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-public class  StockPriceDAO {
-    public void insertStockPrice(String symbol, String price) {
-        String sql = "INSERT INTO stock_prices(symbol, price) VALUES(?, ?)";
+
+public class StockPriceDAO {
+
+    public void insertStockPrice(String symbol, String openPrice, String highPrice, String lowPrice,
+                                 String closePrice, String ltp, String volume, String changePercentage) {
+        String query = "INSERT INTO stock_prices (symbol, open_price, high_price, low_price, close_price, ltp, volume, change_percentage) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            if (conn == null) {
-                System.out.println("Connection is null, cannot proceed with insertion.");
-                return;
-            }
-            System.out.println("Inserting data: Symbol = " + symbol + ", Price = " + price);
-            pstmt.setString(1, symbol);
-            pstmt.setString(2, price);
-            conn.setAutoCommit(false);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            int affectedRows = pstmt.executeUpdate();
-            if (affectedRows > 0) {
-                System.out.println("Data inserted successfully for " + symbol);
-                conn.commit(); // Commit the transaction
-            } else {
-                System.out.println("No rows affected.");
-                conn.rollback(); // Rollback in case of failure
-            }
+            stmt.setString(1, symbol);
+            stmt.setBigDecimal(2, parseBigDecimal(openPrice));
+            stmt.setBigDecimal(3, parseBigDecimal(highPrice));
+            stmt.setBigDecimal(4, parseBigDecimal(lowPrice));
+            stmt.setBigDecimal(5, parseBigDecimal(closePrice));
+            stmt.setBigDecimal(6, parseBigDecimal(ltp));
+            stmt.setLong(7, parseLong(volume));
+            stmt.setBigDecimal(8, parseBigDecimal(changePercentage));
 
-//            pstmt.executeUpdate();
-//            conn.commit();
-//            System.out.println("Data inserted successfully for " + symbol);
+            stmt.executeUpdate();
+            System.out.println("Inserted stock price for: " + symbol);
 
         } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
-            e.printStackTrace();        }
+            e.printStackTrace();
+        }
+    }
+
+    private java.math.BigDecimal parseBigDecimal(String value) {
+        if (value == null || value.isEmpty()) {
+            return java.math.BigDecimal.ZERO;
+        }
+        return new java.math.BigDecimal(value.replaceAll(",", ""));
+    }
+
+    private long parseLong(String value) {
+        if (value == null || value.isEmpty()) {
+            return 0;
+        }
+        return Long.parseLong(value.replaceAll(",", ""));
     }
 }
