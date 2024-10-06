@@ -23,6 +23,9 @@ public class LoginController {
     @FXML
     private PasswordField passwordField;
 
+    // Variable to store the account ID
+    private int accountId;
+
     @FXML
     private void handleSignInAction() {
         String username = usernameField.getText();
@@ -30,7 +33,6 @@ public class LoginController {
 
         // Check if the user exists in the database
         if (authenticateUser(username, password)) {
-            //showAlert("Login Successful", "Welcome, " + username + "!");
             // Redirect to the main application page
             goToMainPage();
         } else {
@@ -39,25 +41,34 @@ public class LoginController {
     }
 
     private boolean authenticateUser(String username, String password) {
-        String query = "SELECT * FROM users WHERE username = ? AND password = ?";
+        String query = "SELECT a.account_id FROM users u " +
+                "JOIN account a ON u.username = a.username " +
+                "WHERE u.username = ? AND u.password = ?";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, username);
             statement.setString(2, password); // Consider using hashed password comparison
             ResultSet resultSet = statement.executeQuery();
 
-            // If a record is found, the user is authenticated
-            return resultSet.next();
+            // If a record is found, the user is authenticated and fetch the account_id
+            if (resultSet.next()) {
+                accountId = resultSet.getInt("account_id"); // Set accountId from the result
+                return true; // User is authenticated
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
+        return false; // User not authenticated
     }
 
     private void goToMainPage() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/fianance/Main-Page.fxml"));
             Parent mainPageRoot = fxmlLoader.load();
+
+            MainPageController mainPageController = fxmlLoader.getController();
+            mainPageController.setLoggedInUserId(accountId); // Pass the account ID to the main page
 
             Scene scene = new Scene(mainPageRoot, 800, 600);
 
@@ -73,7 +84,6 @@ public class LoginController {
             // Optionally, show an error message if loading fails
         }
     }
-
 
     @FXML
     private void handleSignUpAction() {

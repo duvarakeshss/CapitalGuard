@@ -29,10 +29,10 @@
         <!-- Table to Show Transactions -->
         <TableView fx:id="transactionsTable" layoutX="14.0" layoutY="20.0" prefHeight="200.0" prefWidth="800.0">
             <columns>
-                <TableColumn fx:id="transactionIdCol" prefWidth="150.0" text="Transaction ID" styleClass="table-header"/>
-                <TableColumn fx:id="amountCol" prefWidth="150.0" text="Amount" styleClass="table-header"/>
-                <TableColumn fx:id="dateCol" prefWidth="250.0" text="Date" styleClass="table-header"/>
-                <TableColumn fx:id="descriptionCol" prefWidth="250.0" text="Description" styleClass="table-header"/>
+                <TableColumn fx:id="transactionIdCol" prefWidth="150.0" text="Transaction ID" />
+                <TableColumn fx:id="amountCol" prefWidth="150.0" text="Amount" />
+                <TableColumn fx:id="dateCol" prefWidth="250.0" text="Date" />
+                <TableColumn fx:id="descriptionCol" prefWidth="250.0" text="Description" />
             </columns>
         </TableView>
     </children>
