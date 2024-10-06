@@ -25,7 +25,17 @@ public class LoginController {
 
     // Variable to store the account ID
     private int accountId;
+    private int loggedInUserId; // Variable to store logged-in user ID
 
+    // Other existing fields and methods...
+
+    public void setLoggedInUserId(int userId) {
+        this.loggedInUserId = userId; // Assign the user ID to the variable
+    }
+
+    public int getLoggedInUserId() {
+        return loggedInUserId; // Getter to access the user ID
+    }
     @FXML
     private void handleSignInAction() {
         String username = usernameField.getText();
