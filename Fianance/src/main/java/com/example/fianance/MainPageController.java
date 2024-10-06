@@ -10,6 +10,11 @@ import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import java.sql.SQLException;  // Ensure this is included
+
 
 public class MainPageController {
 
@@ -23,9 +28,28 @@ public class MainPageController {
 
     @FXML
     private void handleStockAction() {
-        showAlert("Stock Management", "Navigating to Stock Management...");
-        // You can add navigation to a new page or scene here for stock management
-        // navigateToStockManagement(); // Call your method when implemented
+        try {
+            String url = "https://www.nseindia.com/market-data/live-equity-market";
+
+            Document document = Jsoup.connect(url).get();
+
+            StockPriceDAO stockPriceDAO = new StockPriceDAO();
+
+            for (Element row : document.select("table tbody tr")) {
+                String symbol = row.select("td.symbol").text();
+                String price = row.select("td.price").text();
+
+                // Insert scraped data into the database using DAO
+                stockPriceDAO.insertStockPrice(symbol, price);
+            }
+
+            // Show success alert after scraping and storing data
+            showAlert("Stock Management", "Data scraped from NSE website and stored successfully.");
+        } catch (IOException e) {
+            showAlert("Error", "Failed to scrape data from NSE: " + e.getMessage());
+            e.printStackTrace();
+        }
+
     }
 
     @FXML
