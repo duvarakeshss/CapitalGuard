@@ -1,0 +1,64 @@
+/* Dashboard.css */
+
+/* Root styling */
+.root {
+    -fx-font-family: Arial; /* Font family */
+    -fx-padding: 20; /* Padding around the root */
+    -fx-background-color: white ;
+}
+
+/* Button styling */
+Button {
+    -fx-pref-width: 100px; /* Preferred button width */
+    -fx-background-color: #4CAF50; /* Green background */
+    -fx-text-fill: white; /* White text */
+    -fx-font-size: 14px; /* Font size */
+    -fx-border-radius: 5px; /* Rounded corners */
+    -fx-padding: 8px 15px; /* Padding inside the button */
+}
+
+/* Button hover effect */
+Button:hover {
+    -fx-background-color: #45a049; /* Darker green on hover */
+}
+
+/* Styling for the BarChart */
+.bar-chart {
+    -fx-background-color: white; /* White background for the chart */
+    -fx-border-color: #cccccc; /* Light gray border */
+    -fx-border-width: 2; /* Border width */
+}
+
+/* Styling for the PieChart */
+.pie-chart {
+    -fx-background-color: white; /* White background for the chart */
+    -fx-border-color: #cccccc; /* Light gray border */
+    -fx-border-width: 2; /* Border width */
+}
+
+/* Styling for the LineChart */
+.line-chart {
+    -fx-background-color: white; /* White background for the chart */
+    -fx-border-color: #cccccc; /* Light gray border */
+    -fx-border-width: 2; /* Border width */
+}
+
+/* Styling for Text within charts (if needed) */
+.text {
+    -fx-font-size: 12px; /* Font size for text inside charts */
+    -fx-fill: #333333; /* Dark text color */
+}
+
+/* Additional styling for charts (optional) */
+.chart-title {
+    -fx-font-size: 18px; /* Font size for chart titles */
+    -fx-text-fill: white; /* White text color */
+}
+
+.axis-label {
+    -fx-text-fill: white; /* White labels for axes */
+}
+
+.chart-plot-background {
+    -fx-background-color: transparent; /* Transparent background for plots */
+}

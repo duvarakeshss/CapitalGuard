@@ -16,6 +16,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javafx.event.ActionEvent; // Added import for ActionEvent
+import javafx.fxml.FXMLLoader; // Added import for FXMLLoader
+import javafx.scene.Node; // Added import for Node
+import javafx.scene.Parent; // Added import for Parent
+import javafx.scene.Scene; // Added import for Scene
+import javafx.stage.Stage; // Added import for Stage
+
+import java.io.IOException; // Added import for IOException
+
 public class FinanceDashboardController {
 
     // Store the current user's ID
@@ -211,34 +220,34 @@ public class FinanceDashboardController {
     }
 
     @FXML
-    private void handleShowAnalytics() {
-        String query = "SELECT SUM(amount) AS total, transaction_type FROM transaction WHERE account_id = ? GROUP BY transaction_type";
+    private void handleShowAnalytics(ActionEvent event) { // Updated to take ActionEvent parameter
+        try {
+            // Load the Analytics FXML file
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/fianance/Analytics.fxml"));
+            Parent root = loader.load();
 
-        double totalIncome = 0;
-        double totalExpenses = 0;
+            // Get the controller for the Analytics page
+            AnalyticsController analyticsController = loader.getController();
+            analyticsController.setAccountId(loggedInUserId); // Pass the logged-in user's ID
 
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+            // Create a new scene with the loaded root
+            Scene scene = new Scene(root, 800, 650);
 
-            statement.setInt(1, loggedInUserId); // Filter analytics by the logged-in user
-            ResultSet resultSet = statement.executeQuery();
+            // Load the CSS and apply it to the scene (if you have any CSS for Analytics)
+            String css = this.getClass().getResource("/com/example/fianance/Analytics.css").toExternalForm();
+            scene.getStylesheets().add(css);
 
-            while (resultSet.next()) {
-                String type = resultSet.getString("transaction_type");
-                double total = resultSet.getDouble("total");
-                if ("credit".equalsIgnoreCase(type)) {
-                    totalIncome += total;
-                } else if ("debit".equalsIgnoreCase(type)) {
-                    totalExpenses += total;
-                }
-            }
+            // Get the current stage and set the new scene
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Analytics");
+            stage.show();
 
-            showAlert("Analytics", "Total Income: " + totalIncome + "\nTotal Expenses: " + totalExpenses);
-
-        } catch (SQLException e) {
-            showAlert("Error", "Unable to load analytics: " + e.getMessage());
+        } catch (IOException e) {
+            showAlert("Error", "Failed to load analytics page: " + e.getMessage());
         }
     }
+
 
     @FXML
     private void handleShowBalance() {
