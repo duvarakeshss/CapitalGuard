@@ -1,0 +1,25 @@
+
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE account (
+    account_id INT AUTO_INCREMENT PRIMARY KEY,  -- Unique account ID
+    username VARCHAR(50) NOT NULL,              -- Username linked to the user
+    balance DECIMAL(10, 2) DEFAULT 0.00,        -- Account balance with 2 decimal points
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp of account creation
+    FOREIGN KEY (username) REFERENCES users(username) -- Link to the users table
+);
+
+CREATE TABLE transaction (
+    transaction_id SERIAL PRIMARY KEY,        -- Unique ID for each transaction
+    account_id INT NOT NULL,                  -- Foreign key linking to account table
+    amount DECIMAL(10, 2) NOT NULL,           -- Transaction amount (can be positive or negative)
+    transaction_type VARCHAR(20) NOT NULL,    -- Type of transaction ('credit' or 'debit')
+    description TEXT,                         -- Optional description of the transaction
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- When the transaction was made
+    FOREIGN KEY (account_id) REFERENCES account(account_id)  -- Foreign key constraint
+);
