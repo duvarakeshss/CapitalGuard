@@ -10,17 +10,17 @@ public class Run {
 
         try (Connection conn = DB.connect();   // Assuming DB.connect() returns a valid Connection object
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM products")) {
+             ResultSet rs = stmt.executeQuery("SELECT * FROM users")) {
 
             // Process the result set
             while (rs.next()) {
                 // Assuming the products table has columns 'id', 'name', 'price'
                 int id = rs.getInt("id");
-                String name = rs.getString("name");
-                double price = rs.getDouble("price");
+                String name = rs.getString("username");
+                String price = rs.getString("password");
 
                 // Print each row's data
-                System.out.printf("Product ID: %d, Name: %s, Price: %.2f%n", id, name, price);
+                System.out.printf("ID: %d, UserName: %s, Password: %s\n", id, name, price);
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());

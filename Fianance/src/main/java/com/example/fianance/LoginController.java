@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.Parent;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
-import javafx.scene.control.Alert; // Import the Alert class
+import javafx.scene.control.Alert;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -30,8 +30,9 @@ public class LoginController {
 
         // Check if the user exists in the database
         if (authenticateUser(username, password)) {
-            showAlert("Login Successful", "Welcome, " + username + "!");
-            // Redirect to the main application page or another scene here
+            //showAlert("Login Successful", "Welcome, " + username + "!");
+            // Redirect to the main application page
+            goToMainPage();
         } else {
             showAlert("Login Failed", "Invalid username or password.");
         }
@@ -53,14 +54,33 @@ public class LoginController {
         }
     }
 
+    private void goToMainPage() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/fianance/Main-Page.fxml"));
+            Parent mainPageRoot = fxmlLoader.load();
+
+            Scene scene = new Scene(mainPageRoot, 800, 600);
+
+            // Apply stylesheet
+            scene.getStylesheets().add(getClass().getResource("/com/example/fianance/Main-Page.css").toExternalForm());
+
+            Stage stage = (Stage) usernameField.getScene().getWindow();  // Get the current stage
+            stage.setScene(scene);                                       // Set new scene size
+            stage.setTitle("Main Page");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Optionally, show an error message if loading fails
+        }
+    }
+
+
     @FXML
     private void handleSignUpAction() {
         try {
-            // Attempt to load the signup view
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/fianance/signup.fxml"));
             Parent signUpRoot = fxmlLoader.load();
 
-            // Create a new stage or get the current stage
             Stage stage = (Stage) usernameField.getScene().getWindow();  // Get the current stage
             stage.setScene(new Scene(signUpRoot, 800, 600));
             stage.setTitle("Sign Up");

@@ -1,0 +1,92 @@
+/* General styles */
+.root {
+    -fx-font-family: Arial, sans-serif;
+    -fx-background-color: black; /* Dark background for the dashboard */
+}
+
+/* Title label styles */
+.title-label {
+    -fx-font-size: 28;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff; /* White text for the title */
+    -fx-margin-bottom: 20;
+}
+
+/* Label styles */
+.label {
+    -fx-font-size: 18;
+    -fx-text-fill: #ecf0f1; /* Light text color */
+}
+
+/* TextField styles */
+.text-field {
+    -fx-font-size: 16;
+    -fx-padding: 8;
+    -fx-background-color: white;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 5;
+}
+
+.text-field:focused {
+    -fx-border-color: red;
+}
+
+/* ChoiceBox styles */
+/* General styles for all ChoiceBoxes */
+.choice-box {
+    -fx-text-fill: black; /* Text color */
+    -fx-background-color: grey; /* Background color */
+    -fx-border-color: #bdc3c7; /* Border color */
+    -fx-border-radius: 5; /* Rounded corners */
+    -fx-font-size: 16; /* Set font size */
+}
+
+/* Specifically targeting the choice box within the AnchorPane */
+AnchorPane .choice-box {
+    -fx-text-fill: black; /* Text color */
+}
+
+.choice-box:focused {
+    -fx-border-color: red; /* Border color when focused */
+}
+
+
+/* Button styles */
+.button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-padding: 10 20;
+    -fx-font-size: 16;
+    -fx-border-radius: 5;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #45a049;
+}
+
+/* TableView styles */
+.table-view {
+    -fx-padding: 10;
+    -fx-background-color: #ffffff;
+    -fx-border-radius: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.0, 0, 1);
+}
+
+.table-view .column-header {
+    -fx-background-color: #ecf0f1;
+    -fx-font-weight: bold;
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: #d5dbdb;
+}
+/* Table column header styles */
+.table-view .column-header {
+    -fx-background-color: #2c3e50; /* Dark background for headers */
+    -fx-text-fill: #ffffff; /* White text for headers */
+    -fx-font-weight: bold; /* Bold text for headers */
+    -fx-padding: 5; /* Padding for the headers */
+}
+
+

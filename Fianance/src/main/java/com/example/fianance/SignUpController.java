@@ -60,18 +60,42 @@ public class SignUpController {
             return false; // Username already exists
         }
 
-        String query = "INSERT INTO users (username, password) VALUES (?, ?)";
+        String userQuery = "INSERT INTO users (username, password) VALUES (?, ?)";
+        String accountQuery = "INSERT INTO account (username, balance) VALUES (?, ?)"; // Inserting into account with a default balance of 0.0
+
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, username);
-            statement.setString(2, password); // Consider hashing the password
-            int rowsAffected = statement.executeUpdate();
-            return rowsAffected > 0; // Return true if user was added
+             PreparedStatement userStatement = connection.prepareStatement(userQuery);
+             PreparedStatement accountStatement = connection.prepareStatement(accountQuery)) {
+
+            // Disable auto-commit for transaction management
+            connection.setAutoCommit(false);
+
+            // Insert the user into the users table
+            userStatement.setString(1, username);
+            userStatement.setString(2, password); // Consider hashing the password
+            int userRowsAffected = userStatement.executeUpdate();
+
+            // Insert the new user into the account table with an initial balance of 0.0
+            accountStatement.setString(1, username);
+            accountStatement.setDouble(2, 0.0); // Initial balance
+            int accountRowsAffected = accountStatement.executeUpdate();
+
+            // If both inserts are successful, commit the transaction
+            if (userRowsAffected > 0 && accountRowsAffected > 0) {
+                connection.commit();
+                return true; // Registration successful
+            } else {
+                // Rollback transaction if something goes wrong
+                connection.rollback();
+                return false;
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
+
 
     private boolean isUsernameTaken(String username) {
         String query = "SELECT * FROM users WHERE username = ?";
