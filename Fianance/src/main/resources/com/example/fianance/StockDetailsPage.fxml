@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.fianance.StockDetailsController">
+    <TableView fx:id="stockTable">
+        <columns>
+            <TableColumn fx:id="symbolColumn" text="Symbol"/>
+            <TableColumn fx:id="nameColumn" text="Name"/>
+            <TableColumn fx:id="priceColumn" text="Last Price"/>
+            <TableColumn fx:id="changeColumn" text="Change"/>
+            <TableColumn fx:id="percentageChangeColumn" text="Percentage Change"/>
+        </columns>
+    </TableView>
+</VBox>

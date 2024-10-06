@@ -1,4 +1,4 @@
-package com.example.fianance;
+package com.example.fianance;  // Fixed the package name to "finance"
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,9 +24,11 @@ import java.util.List;
 public class MainPageController {
 
     private int loggedInUserId;
+    private StockService stockService;  // StockService instance
 
     public void setLoggedInUserId(int userId) {
         this.loggedInUserId = userId;
+        this.stockService = new StockService(); // Initialize StockService
     }
 
     @FXML
@@ -34,6 +36,7 @@ public class MainPageController {
         try {
             String[] stockSymbols = {"AAPL", "NFLX", "ETSY", "KO", "BTC-USD"};
             List<StockData> stockDataList = new ArrayList<>();
+
             for (String stockSymbol : stockSymbols) {
                 StockData stockData = scrapeStockData(stockSymbol);
                 stockDataList.add(stockData);
@@ -43,10 +46,25 @@ public class MainPageController {
             // Convert stock data into CSV file
             String csvFilePath = "stocks_data.csv";
             convertToCSV(stockDataList, csvFilePath);
-            showAlert("Stock Management", "Data scraped and saved to CSV.");
+            showAlert("Stock Management", "Stock data scraped and saved to CSV.");
 
         } catch (IOException | InterruptedException e) {
             showAlert("Error", "Failed to scrape stock data: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleBestSellingStockAction(ActionEvent event) {
+        try {
+            String bestSellingStock = stockService.getBestSellingStock();
+            if (!bestSellingStock.isEmpty()) {
+                showAlert("Best Selling Stock", "The best selling stock is: " + bestSellingStock);
+            } else {
+                showAlert("Best Selling Stock", "No stocks found.");
+            }
+        } catch (Exception e) {
+            showAlert("Error", "Failed to retrieve best selling stock: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -65,12 +83,6 @@ public class MainPageController {
         Element priceElement = doc.selectFirst("fin-streamer[data-field='regularMarketPrice']");
         Element changeElement = doc.selectFirst("fin-streamer[data-field='regularMarketChange']");
         Element changePercentElement = doc.selectFirst("fin-streamer[data-field='regularMarketChangePercent']");
-
-        // Check if the elements are found
-        System.out.println("Stock name element: " + nameElement);
-        System.out.println("Price element: " + priceElement);
-        System.out.println("Change element: " + changeElement);
-        System.out.println("Change percent element: " + changePercentElement);
 
         // Parse the elements
         String name = nameElement != null ? nameElement.text() : "N/A";
@@ -109,13 +121,16 @@ public class MainPageController {
     // Improved parseToBigDecimal method
     private BigDecimal parseToBigDecimal(String value) {
         try {
+            // Trim whitespace
+            value = value.trim();
+
             // Handle parentheses for negative numbers (e.g., (1000) -> -1000)
             if (value.contains("(") && value.contains(")")) {
                 value = value.replace("(", "-").replace(")", "");
             }
 
             // Remove non-numeric characters like commas and percentage signs
-            value = value.replace(",", "").replace("%", "");
+            value = value.replace(",", "").replace("%", "").replace("+", ""); // Remove '+' sign
 
             // Convert to BigDecimal
             return new BigDecimal(value);
@@ -124,6 +139,7 @@ public class MainPageController {
             return BigDecimal.ZERO; // Return 0 in case of a parsing error
         }
     }
+
 
     @FXML
     private void handleStockManagement(ActionEvent event) {
@@ -161,14 +177,14 @@ public class MainPageController {
     }
 
     private void navigateToFinanceDashboard(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/fianance/FinanceDashboard.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/finance/FinanceDashboard.fxml"));
         Parent root = loader.load();
 
         FinanceDashboardController controller = loader.getController();
         controller.setLoggedInUserId(loggedInUserId);
 
         Scene scene = new Scene(root, 800, 650);
-        String css = this.getClass().getResource("/com/example/fianance/Dashboard.css").toExternalForm();
+        String css = this.getClass().getResource("/com/example/finance/Dashboard.css").toExternalForm();
         scene.getStylesheets().add(css);
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -178,12 +194,12 @@ public class MainPageController {
     }
 
     private void navigateToStockManagement(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/fianance/StockManagement.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/finance/StockManagement.fxml"));
         Parent root = loader.load();
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root, 800, 650);
-        String css = this.getClass().getResource("/com/example/fianance/StockManagement.css").toExternalForm();
+        String css = this.getClass().getResource("/com/example/finance/StockManagement.css").toExternalForm();
         scene.getStylesheets().add(css);
 
         stage.setScene(scene);

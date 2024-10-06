@@ -9,6 +9,7 @@
         <Insets top="50" />
     </VBox.margin>
 
-    <Button text="Stock Management" onAction="#handleStockAction" prefWidth="200" />
-    <Button text="Finance Management" onAction="#handleFinanceAction" prefWidth="200" />
+    <Button text="Fetch Stocks" onAction="#handleStockAction" prefWidth="200" />
+    <Button text="View Stocks" onAction="#handleStockManagement" prefWidth="200" />
+    <Button text="Go to Finance" onAction="#handleFinanceAction" prefWidth="200" />
 </VBox>
