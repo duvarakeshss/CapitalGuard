@@ -124,21 +124,38 @@ public class MainPageController {
             // Trim whitespace
             value = value.trim();
 
+            // Log the value being parsed
+            System.out.println("Parsing value: " + value); // Debugging log
+
             // Handle parentheses for negative numbers (e.g., (1000) -> -1000)
             if (value.contains("(") && value.contains(")")) {
                 value = value.replace("(", "-").replace(")", "");
             }
 
-            // Remove non-numeric characters like commas and percentage signs
-            value = value.replace(",", "").replace("%", "").replace("+", ""); // Remove '+' sign
+            // Remove non-numeric characters like commas, percentage signs, and '+' signs
+            value = value.replace(",", "").replace("%", "").replace("+", "");
+
+            // Handle multiple negative signs (e.g., "--0.50" becomes "0.50")
+            while (value.startsWith("-") && value.length() > 1) {
+                value = value.substring(1);
+            }
+
+            // Handle empty strings after cleaning
+            if (value.isEmpty()) {
+                System.out.println("Parsed value is empty after cleaning. Returning 0."); // Debugging log
+                return BigDecimal.ZERO; // Return 0 if the value is empty
+            }
 
             // Convert to BigDecimal
             return new BigDecimal(value);
         } catch (NumberFormatException e) {
+            System.err.println("Failed to parse value: " + value); // Log the problematic value
             e.printStackTrace();
             return BigDecimal.ZERO; // Return 0 in case of a parsing error
         }
     }
+
+
 
 
     @FXML
