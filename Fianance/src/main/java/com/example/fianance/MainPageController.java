@@ -194,14 +194,14 @@ public class MainPageController {
     }
 
     private void navigateToFinanceDashboard(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/finance/FinanceDashboard.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/fianance/FinanceDashboard.fxml"));
         Parent root = loader.load();
 
         FinanceDashboardController controller = loader.getController();
         controller.setLoggedInUserId(loggedInUserId);
 
         Scene scene = new Scene(root, 800, 650);
-        String css = this.getClass().getResource("/com/example/finance/Dashboard.css").toExternalForm();
+        String css = this.getClass().getResource("/com/example/fianance/Dashboard.css").toExternalForm();
         scene.getStylesheets().add(css);
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -211,12 +211,12 @@ public class MainPageController {
     }
 
     private void navigateToStockManagement(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/finance/StockManagement.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/fianance/StockManagement.fxml"));
         Parent root = loader.load();
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root, 800, 650);
-        String css = this.getClass().getResource("/com/example/finance/StockManagement.css").toExternalForm();
+        String css = this.getClass().getResource("/com/example/fianance/StockManagement.css").toExternalForm();
         scene.getStylesheets().add(css);
 
         stage.setScene(scene);
