@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.Parent;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
-import javafx.scene.control.Alert; // Import the Alert class
+import javafx.scene.control.Alert; 
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -43,13 +43,13 @@ public class SignUpController {
             return;
         }
 
-        // Save user to the database
+        
         if (registerUser(username, password)) {
             System.out.println("User registered successfully.");
-            // Redirect to the login screen
+           
             goToLoginView();
         } else {
-            // Show alert if registration failed
+        
             showAlert("Registration Failed", "Username may already exist.");
         }
     }
@@ -67,7 +67,6 @@ public class SignUpController {
              PreparedStatement userStatement = connection.prepareStatement(userQuery);
              PreparedStatement accountStatement = connection.prepareStatement(accountQuery)) {
 
-            // Disable auto-commit for transaction management
             connection.setAutoCommit(false);
 
             // Insert the user into the users table
@@ -75,17 +74,14 @@ public class SignUpController {
             userStatement.setString(2, password); // Consider hashing the password
             int userRowsAffected = userStatement.executeUpdate();
 
-            // Insert the new user into the account table with an initial balance of 0.0
             accountStatement.setString(1, username);
             accountStatement.setDouble(2, 0.0); // Initial balance
             int accountRowsAffected = accountStatement.executeUpdate();
 
-            // If both inserts are successful, commit the transaction
             if (userRowsAffected > 0 && accountRowsAffected > 0) {
                 connection.commit();
                 return true; // Registration successful
             } else {
-                // Rollback transaction if something goes wrong
                 connection.rollback();
                 return false;
             }
@@ -104,7 +100,6 @@ public class SignUpController {
             statement.setString(1, username);
             ResultSet resultSet = statement.executeQuery();
 
-            // If a record is found, the username is already taken
             return resultSet.next();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -114,26 +109,20 @@ public class SignUpController {
 
     private void goToLoginView() {
         try {
-            // Load the login view
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/fianance/login-view.fxml"));
             Parent loginRoot = fxmlLoader.load();
 
-            // Get the current stage and set the new scene
             Stage stage = (Stage) newUsernameField.getScene().getWindow();  // Get the current stage
 
-            // Create the scene with specified dimensions
             Scene scene = new Scene(loginRoot, 800, 600);
 
-            // Include the stylesheet
             scene.getStylesheets().add(getClass().getResource("/com/example/fianance/style.css").toExternalForm());
 
-            // Set the scene and title
             stage.setScene(scene);
             stage.setTitle("Login");
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            // Optionally, show an error message if loading fails
         }
     }
 
