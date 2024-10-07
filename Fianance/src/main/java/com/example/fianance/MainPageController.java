@@ -1,4 +1,4 @@
-package com.example.fianance;  // Fixed the package name to "finance"
+package com.example.fianance;  
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import javafx.scene.control.TextArea; // Import this for displaying stock info
+import javafx.scene.control.TextArea; 
 import javafx.scene.layout.VBox;
 
 import java.io.BufferedReader;
@@ -123,7 +123,6 @@ public class MainPageController {
         }
     }
 
-    // Improved parseToBigDecimal method
     private BigDecimal parseToBigDecimal(String value) {
         try {
             // Trim whitespace
@@ -151,7 +150,6 @@ public class MainPageController {
                 return BigDecimal.ZERO; // Return 0 if the value is empty
             }
 
-            // Convert to BigDecimal
             return new BigDecimal(value);
         } catch (NumberFormatException e) {
             System.err.println("Failed to parse value: " + value); // Log the problematic value
@@ -166,7 +164,6 @@ public class MainPageController {
     @FXML
     private void handleStockManagement(ActionEvent event) {
         try {
-            // Display the CSV file content when Stock Management is clicked
             Path csvFilePath = Paths.get("stocks_data.csv");
             if (Files.exists(csvFilePath)) {
                 String csvContent = Files.readString(csvFilePath);
