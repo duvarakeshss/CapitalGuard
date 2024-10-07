@@ -16,18 +16,18 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javafx.event.ActionEvent; // Added import for ActionEvent
-import javafx.fxml.FXMLLoader; // Added import for FXMLLoader
-import javafx.scene.Node; // Added import for Node
-import javafx.scene.Parent; // Added import for Parent
-import javafx.scene.Scene; // Added import for Scene
-import javafx.stage.Stage; // Added import for Stage
+import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader; 
+import javafx.scene.Node; 
+import javafx.scene.Parent; 
+import javafx.scene.Scene; 
+import javafx.stage.Stage; 
 
-import java.io.IOException; // Added import for IOException
+import java.io.IOException; 
 
 public class FinanceDashboardController {
 
-    // Store the current user's ID
+    
     private int loggedInUserId;
 
     @FXML
@@ -54,24 +54,23 @@ public class FinanceDashboardController {
     @FXML
     private TableColumn<ObservableList<String>, String> descriptionCol;
 
-    // Method to set the logged-in user's ID (called after user logs in)
     public void setLoggedInUserId(int userId) {
         this.loggedInUserId = userId;
     }
 
     @FXML
     public void initialize() {
-        // Initialize the choice box with "credit" and "debit"
+
         transactionTypeChoiceBox.setItems(FXCollections.observableArrayList("credit", "debit"));
 
-        // Initialize columns for TableView
+        
         transactionIdCol.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().get(0)));
         amountCol.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().get(1)));
         dateCol.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().get(2)));
         descriptionCol.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().get(3)));
 
-        // Load initial data
-        handleViewTransactions(); // Load last 30 transactions
+        
+        handleViewTransactions(); 
     }
 
     @FXML
@@ -80,7 +79,7 @@ public class FinanceDashboardController {
         String transactionType = transactionTypeChoiceBox.getValue();
         String description = descriptionField.getText();
 
-        // Validate input
+    
         if (amountText.isEmpty() || transactionType == null || description.isEmpty()) {
             showAlert("Error", "Please fill all fields.");
             return;
@@ -89,18 +88,17 @@ public class FinanceDashboardController {
         try {
             double amount = Double.parseDouble(amountText);
 
-            // Fetch current balance and validate transaction
+    
             if (!validateTransaction(transactionType, amount)) {
-                return; // If validation fails, exit
+                return; 
             }
 
-            // Insert the transaction and update the balance
+        
             executeTransaction(transactionType, amount, description);
 
-            // Clear input fields after successful transaction
+
             clearFields();
 
-            // Refresh data after adding the transaction
             handleViewTransactions();
             showAlert("Success", "Transaction added successfully!");
 
@@ -113,14 +111,12 @@ public class FinanceDashboardController {
         String fetchBalanceQuery = "SELECT balance FROM account WHERE account_id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement fetchBalanceStmt = connection.prepareStatement(fetchBalanceQuery)) {
-
-            fetchBalanceStmt.setInt(1, loggedInUserId);  // Use loggedInUserId
+            fetchBalanceStmt.setInt(1, loggedInUserId);  
             ResultSet rs = fetchBalanceStmt.executeQuery();
 
             if (rs.next()) {
                 double currentBalance = rs.getDouble("balance");
 
-                // Check for debit: If insufficient balance, stop the transaction
                 if ("debit".equalsIgnoreCase(transactionType) && currentBalance < amount) {
                     showAlert("Error", "Insufficient balance for this debit transaction.");
                     return false;
@@ -147,7 +143,6 @@ public class FinanceDashboardController {
              PreparedStatement updateBalanceStmt = connection.prepareStatement(updateBalanceQuery);
              PreparedStatement insertTransactionStmt = connection.prepareStatement(insertTransactionQuery)) {
 
-            // Fetch current balance
             fetchBalanceStmt.setInt(1, loggedInUserId);
             ResultSet rs = fetchBalanceStmt.executeQuery();
             if (rs.next()) {
@@ -156,7 +151,6 @@ public class FinanceDashboardController {
                 throw new SQLException("Account not found for user ID: " + loggedInUserId);
             }
 
-            // Calculate new balance based on transaction type
             if ("debit".equalsIgnoreCase(transactionType)) {
                 if (currentBalance < amount) {
                     throw new SQLException("Insufficient funds for debit transaction.");
@@ -168,7 +162,6 @@ public class FinanceDashboardController {
                 throw new IllegalArgumentException("Invalid transaction type: " + transactionType);
             }
 
-            // Update account balance
             updateBalanceStmt.setDouble(1, currentBalance);
             updateBalanceStmt.setInt(2, loggedInUserId);
             int rowsUpdated = updateBalanceStmt.executeUpdate();
@@ -176,7 +169,6 @@ public class FinanceDashboardController {
                 throw new SQLException("Failed to update balance for user ID: " + loggedInUserId);
             }
 
-            // Insert transaction record
             insertTransactionStmt.setInt(1, loggedInUserId);
             insertTransactionStmt.setDouble(2, amount);
             insertTransactionStmt.setString(3, transactionType);
@@ -185,7 +177,7 @@ public class FinanceDashboardController {
 
         } catch (SQLException e) {
             showAlert("Error", "Transaction failed: " + e.getMessage());
-            e.printStackTrace(); // For debugging
+            e.printStackTrace(); 
         } catch (IllegalArgumentException e) {
             showAlert("Error", e.getMessage());
         }
@@ -200,7 +192,7 @@ public class FinanceDashboardController {
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
-            statement.setInt(1, loggedInUserId);  // Filter transactions for the logged-in user
+            statement.setInt(1, loggedInUserId); 
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
@@ -212,7 +204,7 @@ public class FinanceDashboardController {
                 transactions.add(transactionData);
             }
 
-            Platform.runLater(() -> transactionsTable.setItems(transactions)); // Ensure updates happen on the JavaFX Application Thread
+            Platform.runLater(() -> transactionsTable.setItems(transactions)); 
 
         } catch (SQLException e) {
             showAlert("Error", "Unable to load transactions: " + e.getMessage());
@@ -220,24 +212,22 @@ public class FinanceDashboardController {
     }
 
     @FXML
-    private void handleShowAnalytics(ActionEvent event) { // Updated to take ActionEvent parameter
+    private void handleShowAnalytics(ActionEvent event) { 
         try {
-            // Load the Analytics FXML file
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/fianance/Analytics.fxml"));
             Parent root = loader.load();
 
-            // Get the controller for the Analytics page
             AnalyticsController analyticsController = loader.getController();
-            analyticsController.setAccountId(loggedInUserId); // Pass the logged-in user's ID
+            analyticsController.setAccountId(loggedInUserId); 
 
-            // Create a new scene with the loaded root
+            
             Scene scene = new Scene(root, 800, 650);
 
-            // Load the CSS and apply it to the scene (if you have any CSS for Analytics)
+
             String css = this.getClass().getResource("/com/example/fianance/Analytics.css").toExternalForm();
             scene.getStylesheets().add(css);
 
-            // Get the current stage and set the new scene
+        
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
             stage.setTitle("Analytics");
@@ -256,7 +246,7 @@ public class FinanceDashboardController {
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
-            statement.setInt(1, loggedInUserId); // Fetch balance for the logged-in user
+            statement.setInt(1, loggedInUserId); 
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
