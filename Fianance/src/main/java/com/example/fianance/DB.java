@@ -27,12 +27,12 @@ public class DB {
 
             System.out.println("URL: " + url);
             System.out.println("Username: " + username);
-            // Don’t print passwords for security reasons
+        
 
             // Return a connection object
             return DriverManager.getConnection(url, username, password);
         } catch (Exception e) {
-            e.printStackTrace(); // Print the stack trace for debugging
+            e.printStackTrace(); 
             throw new SQLException("Failed to load database connection details", e);
         }
     }
