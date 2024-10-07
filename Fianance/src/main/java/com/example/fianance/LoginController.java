@@ -27,7 +27,6 @@ public class LoginController {
     private int accountId;
     private int loggedInUserId; // Variable to store logged-in user ID
 
-    // Other existing fields and methods...
 
     public void setLoggedInUserId(int userId) {
         this.loggedInUserId = userId; // Assign the user ID to the variable
@@ -41,7 +40,6 @@ public class LoginController {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
-        // Check if the user exists in the database
         if (authenticateUser(username, password)) {
             // Redirect to the main application page
             goToMainPage();
@@ -60,7 +58,6 @@ public class LoginController {
             statement.setString(2, password); // Consider using hashed password comparison
             ResultSet resultSet = statement.executeQuery();
 
-            // If a record is found, the user is authenticated and fetch the account_id
             if (resultSet.next()) {
                 accountId = resultSet.getInt("account_id"); // Set accountId from the result
                 return true; // User is authenticated
@@ -82,7 +79,6 @@ public class LoginController {
 
             Scene scene = new Scene(mainPageRoot, 800, 600);
 
-            // Apply stylesheet
             scene.getStylesheets().add(getClass().getResource("/com/example/fianance/Main-Page.css").toExternalForm());
 
             Stage stage = (Stage) usernameField.getScene().getWindow();  // Get the current stage
@@ -91,7 +87,6 @@ public class LoginController {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            // Optionally, show an error message if loading fails
         }
     }
 
@@ -107,7 +102,6 @@ public class LoginController {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            // Optionally, show an error message if loading fails
         }
     }
 
