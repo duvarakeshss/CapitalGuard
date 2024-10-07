@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.Parent;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
-import javafx.scene.control.Alert; 
+import javafx.scene.control.Alert;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -34,24 +34,39 @@ public class SignUpController {
 
         // Validate input
         if (username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-            System.out.println("Please fill in all fields.");
+            showAlert("Input Error", "Please fill in all fields.");
             return;
         }
 
+        // Check if passwords match
         if (!password.equals(confirmPassword)) {
-            System.out.println("Passwords do not match.");
+            showAlert("Password Mismatch", "Passwords do not match.");
             return;
         }
 
-        
+        // Validate password strength using regex
+        if (!isValidPassword(password)) {
+            showAlert("Weak Password", "Password must be at least 8 characters long, " +
+                    "contain an uppercase letter, a lowercase letter, a number, and a special character.");
+            return;
+        }
+
+        // Save user to the database
         if (registerUser(username, password)) {
             System.out.println("User registered successfully.");
-           
+            // Redirect to the login screen
             goToLoginView();
         } else {
-        
+            // Show alert if registration failed
             showAlert("Registration Failed", "Username may already exist.");
         }
+    }
+
+    // Method to validate password strength using regex
+    private boolean isValidPassword(String password) {
+        // Password regex: at least 8 characters, contains uppercase, lowercase, number, and special character
+        String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+        return password.matches(passwordRegex);
     }
 
     private boolean registerUser(String username, String password) {
@@ -67,21 +82,25 @@ public class SignUpController {
              PreparedStatement userStatement = connection.prepareStatement(userQuery);
              PreparedStatement accountStatement = connection.prepareStatement(accountQuery)) {
 
+            // Disable auto-commit for transaction management
             connection.setAutoCommit(false);
 
             // Insert the user into the users table
             userStatement.setString(1, username);
-            userStatement.setString(2, password); // Consider hashing the password
+            userStatement.setString(2, password);
             int userRowsAffected = userStatement.executeUpdate();
 
+            // Insert the new user into the account table with an initial balance of 0.0
             accountStatement.setString(1, username);
             accountStatement.setDouble(2, 0.0); // Initial balance
             int accountRowsAffected = accountStatement.executeUpdate();
 
+            // If both inserts are successful, commit the transaction
             if (userRowsAffected > 0 && accountRowsAffected > 0) {
                 connection.commit();
                 return true; // Registration successful
             } else {
+                // Rollback transaction if something goes wrong
                 connection.rollback();
                 return false;
             }
@@ -92,7 +111,6 @@ public class SignUpController {
         }
     }
 
-
     private boolean isUsernameTaken(String username) {
         String query = "SELECT * FROM users WHERE username = ?";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -100,6 +118,7 @@ public class SignUpController {
             statement.setString(1, username);
             ResultSet resultSet = statement.executeQuery();
 
+            // If a record is found, the username is already taken
             return resultSet.next();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -109,20 +128,26 @@ public class SignUpController {
 
     private void goToLoginView() {
         try {
+            // Load the login view
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/fianance/login-view.fxml"));
             Parent loginRoot = fxmlLoader.load();
 
+            // Get the current stage and set the new scene
             Stage stage = (Stage) newUsernameField.getScene().getWindow();  // Get the current stage
 
+            // Create the scene with specified dimensions
             Scene scene = new Scene(loginRoot, 800, 600);
 
+            // Include the stylesheet
             scene.getStylesheets().add(getClass().getResource("/com/example/fianance/style.css").toExternalForm());
 
+            // Set the scene and title
             stage.setScene(scene);
             stage.setTitle("Login");
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+            // Optionally, show an error message if loading fails
         }
     }
 
