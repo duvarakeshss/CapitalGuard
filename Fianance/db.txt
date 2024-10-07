@@ -7,7 +7,7 @@ CREATE TABLE users (
 );
 
 CREATE TABLE account (
-    account_id INT AUTO_INCREMENT PRIMARY KEY,  -- Unique account ID
+    account_id SERIAL PRIMARY KEY,  -- Unique account ID
     username VARCHAR(50) NOT NULL,              -- Username linked to the user
     balance DECIMAL(10, 2) DEFAULT 0.00,        -- Account balance with 2 decimal points
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp of account creation
